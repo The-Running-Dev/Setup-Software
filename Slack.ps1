@@ -6,32 +6,30 @@ $executableName = 'Slack.exe'
 $releaseUrl = 'https://slack.com/downloads/windows'
 $versionRegEx = '.*Version ([\d]+\.[\d\.]+)'
 
-$localExecutable = 'C:\Users\boyank\AppData\Local\slack\slack.exe'
 $installerArguments = '/s'
 
-Clear-Host
+#Clear-Host
 
-if ($localExecutable -eq '') {
-	$localExecutable = Get-ChildItem C:\ -Recurse $executableName `
-		-ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
-}
+$executablePath = Get-ChildItem (Join-Path $env:UserProfile 'AppData\Local') `
+	-Recurse $executableName -ErrorAction SilentlyContinue | `
+	Select-Object -First 1 -ExpandProperty FullName
 
 $latestVersion = Get-LatestVersion $releaseUrl $versionRegEx
-$installedVersion = Get-InstalledVersion $localExecutable
+$installedVersion = Get-InstalledVersion $executablePath
 
-$installer = Get-Installer @{
-	LocalExecutable  = $localExecutable;
-	LatestVersion    = $latestVersion;
-	InstalledVersion = $installedVersion;
-	DownloadUrl      = $downloadUrl
-}
+if ($latestVersion -ne $installedVersion) {
+	$installer = Get-Installer $downloadUrl
 
-Write-Output "
+	Write-Output "
 Latest Version: $latestVersion
 Installed Version: $installedVersion
 
 Installer: $installer
-"
+Installing...`n"
 
-$desktopLink = (Join-Path $env:UserProfile 'Desktop\Slack.lnk')
-Invoke-Installer $installer $installerArguments $desktopLink
+	$desktopLink = (Join-Path $env:UserProfile 'Desktop\Slack.lnk')
+	Invoke-Installer $installer $installerArguments $desktopLink
+}
+else {
+	Write-Output "Your Are Up to Date...`n"
+}

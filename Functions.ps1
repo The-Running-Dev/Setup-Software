@@ -20,21 +20,13 @@ function Get-InstalledVersion($executable) {
     return $version
 }
 
-function Get-Installer($config) {
-    # config.LocalExecutable
-    # config.LatestVersion
-    # config.InstalledVersion
-    # config.DownloadUrl
+function Get-Installer($downloadUrl) {
+    $installer = Join-Path $env:Temp (Split-Path $downloadUrl -Leaf)
 
-    $installer = Join-Path $env:Temp (Split-Path $config.DownloadUrl -Leaf)
+    (New-Object System.Net.WebClient).DownloadFile($downloadUrl, $installer)
 
-    if (-not (Test-Path $config.LocalExecutable) `
-            -or $config.LatestVersion -ne $config.InstalledVersion) {
-        (New-Object System.Net.WebClient).DownloadFile($config.DownloadUrl, $installer)
-
-        if (Test-Path $installer) {
-            return $installer
-        }
+    if (Test-Path $installer) {
+        return $installer
     }
 }
 
@@ -42,6 +34,6 @@ function Invoke-Installer($installer, $arguments, $desktopLink) {
     if (Test-Path $installer -ErrorAction SilentlyContinue) {
         Start-Process $installer $arguments -Wait
 
-        Get-ChildItem $desktopLink | Remove-Item -ErrorAction SilentlyContinue
+        Get-ChildItem $desktopLink -ErrorAction SilentlyContinue | Remove-Item
     }
 }

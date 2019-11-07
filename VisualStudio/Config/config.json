@@ -1,0 +1,12 @@
+{
+    "DownloadUrl": "https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Professional&rel=16",
+    "ReleasesUrl": "https://docs.microsoft.com/en-us/visualstudio/releases/2019/history",
+    "InstallArguments": "--config \"$($config.InstallConfig)\" $interfaceSwitch --norestart --wait",
+    "InstallConfig": "$($PSScriptRoot)\\Config\\.vsconfig",
+    "InstallExecutable": "devenv.exe",
+    "InstallUpdateArguments": "update $interfaceSwitch --norestart --wait",
+    "Installer": "",
+    "InstallerUpdateArguments": "--update $interfaceSwitch --wait",
+    "LayoutDirectory": "D:\\VS2019",
+    "LayoutDirectoryUpdateArguments": "--layout \"$($config.LayoutDirectory)\" --lang en-US $interfaceSwitch --wait"
+}
