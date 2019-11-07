@@ -11,14 +11,14 @@ $interfaceSwitch = $(@{$true = '--passive'; $false = '--quiet' }[$showInterface.
 
 $config = Get-Content (Join-Path $PSScriptRoot 'Config\config.json') | ConvertFrom-Json
 
-# If the install executable is not found
-if (-not (Test-Path $config.InstallExecutable -ErrorAction SilentlyContinue)) {
-    $config.InstallExecutable = Get-ChildItem C:\ -Recurse $config.InstallExecutable `
+# If the installed executable is not found
+if (-not (Test-Path $config.InstalledExecutable -ErrorAction SilentlyContinue)) {
+    $config.InstalledExecutable = Get-ChildItem C:\ -Recurse $config.InstalledExecutable `
         -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
 
     # If the executable is still not found, set it to empty string
-    if (-not (Test-Path $config.InstallExecutable -ErrorAction SilentlyContinue)) {
-        $config.InstallExecutable = ''
+    if (-not (Test-Path $config.InstalledExecutable -ErrorAction SilentlyContinue)) {
+        $config.InstalledExecutable = ''
     }
 }
 
@@ -28,7 +28,7 @@ $releasesHtml = Invoke-WebRequest $config.ReleasesUrl -UseBasicParsing | Convert
 $latestVersion = $releasesHtml.SelectNodes('//table').Descendants('td') | Select-Object -First 1 -ExpandProperty InnerText
 $latestBuildNumber = $releasesHtml.SelectNodes('//table').Descendants('td') | Select-Object -First 1 -Skip 2 -ExpandProperty InnerText
 
-$localVersion = (Get-Item $config.InstallExecutable).VersionInfo.ProductVersion
+$localVersion = (Get-Item $config.InstalledExecutable).VersionInfo.ProductVersion
 $localVersionNode = $releasesHtml.SelectNodes('//table').Descendants('td') | `
     Where-Object InnerText -eq $localVersion | `
     Select-Object -ExpandProperty ParentNode

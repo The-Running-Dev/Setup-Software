@@ -23,10 +23,10 @@ Download Url: $($config.DownloadUrl)
 
 Installed Version: $($config.InstalledVersion)
 Installed Build: $($config.InstalledBuildNumber)
+Installed Executable: $($config.InstalledExecutable)
 
 Install Arguments: $($config.InstallArguments)
 Install Config: $($config.InstallConfig)
-Install Executable: $($config.InstallExecutable)
 Install Update Arguments: $($config.InstallUpdateArguments)
 
 Installer: $($config.Installer)
@@ -63,18 +63,18 @@ if ($config.LatestVersion -ne $config.InstalledVersion) {
 
 
 if (-not $createLayout) {
-    # If the install executable does not exist, this is a new install
-    if (-not (Test-Path $config.InstallExecutable -ErrorAction SilentlyContinue)) {
+    # If the installed executable does not exist, this is a new install
+    if (-not (Test-Path $config.InstalledExecutable -ErrorAction SilentlyContinue)) {
         Write-Output "Installing...
     $($config.InstallationArguments)`n"
 
-        #Start-Process $config.InstallExecutable $config.InstallationArguments -Wait
+        #Start-Process $config.Installer $config.InstallationArguments -Wait
     }
-    elseif ($latestVersion -ne $installedVersion) {
+    elseif ($config.LatestVersion -ne $config.InstalledVersion) {
         Write-Output "Updating Installed Instance...
-    $($config.InstallExecutable) $($config.UpdateArguments)`n"
+    $($config.Installer) $($config.UpdateArguments)`n"
 
-        #Start-Process $config.InstallExecutable $config.UpdateArguments -Wait
+        #Start-Process $config.Installer $config.UpdateArguments -Wait
     }
     else {
         Write-Output "Your Are Up to Date...`n"
