@@ -1,0 +1,15 @@
+Microsoft.MicrosoftOfficeHub
+Microsoft.MixedReality.Portal
+Microsoft.Windows.Cortana
+Microsoft.WindowsCalculator
+Microsoft.WindowsCamera
+Microsoft.WindowsSoundRecorder
+Microsoft.ScreenSketch
+Microsoft.SkypeApp
+Microsoft.YourPhone
+Microsoft.XboxGameCallableUI
+Microsoft.XboxGameOverlay
+Microsoft.XboxGamingOverlay
+Microsoft.XboxIdentityProvider
+Microsoft.XboxSpeechToTextOverlay
+Windows.CBSPreview
