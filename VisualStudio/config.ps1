@@ -1,8 +1,6 @@
 [CmdletBinding()]
 param([switch] $showInterface)
 
-#Clear-Host
-
 Import-Module PowerHTML
 
 . (Join-Path $PSScriptRoot '..\Functions.ps1' -Resolve)

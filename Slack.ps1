@@ -1,6 +1,10 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param()
 
+Clear-Host
+
+$script = $MyInvocation.MyCommand.Name
+
 . (Join-Path $PSScriptRoot 'Functions.ps1')
 
 $downloadUrl = 'https://downloads.slack-edge.com/releases_x64/SlackSetup.exe'
@@ -11,8 +15,6 @@ $versionRegEx = '.*Version ([\d]+\.[\d\.]+)'
 
 $installerArguments = '/s'
 
-Clear-Host
-
 $executablePath = Get-ChildItem (Join-Path $env:UserProfile 'AppData\Local') `
 	-Recurse $executableName -ErrorAction SilentlyContinue | `
 	Select-Object -First 1 -ExpandProperty FullName
@@ -21,7 +23,7 @@ $latestVersion = Get-LatestVersion $releaseUrl $versionRegEx
 $installedVersion = Get-InstalledVersion $executablePath
 
 if ($latestVersion -ne $installedVersion) {
-	if ($pscmdlet.ShouldProcess('Downloading the Installer...')) {
+	if ($pscmdlet.ShouldProcess($script, 'Downloading the Installer...')) {
 		$installer = Get-Installer $downloadUrl
 
 		Write-Output "
@@ -36,5 +38,5 @@ Installing...`n"
 	}
 }
 else {
-	Write-Output "Your Are Up to Date...`n"
+	Write-Output "`nYour Are Up to Date...`n"
 }
