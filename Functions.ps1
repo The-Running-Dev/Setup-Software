@@ -30,8 +30,6 @@ function Get-Installer($config) {
 
     if (-not (Test-Path $config.LocalExecutable) `
             -or $config.LatestVersion -ne $config.InstalledVersion) {
-        Write-Output "Downloading $($config.DownloadUrl)..."
-
         (New-Object System.Net.WebClient).DownloadFile($config.DownloadUrl, $installer)
 
         if (Test-Path $installer) {
@@ -42,10 +40,8 @@ function Get-Installer($config) {
 
 function Invoke-Installer($installer, $arguments, $desktopLink) {
     if (Test-Path $installer -ErrorAction SilentlyContinue) {
-        Write-Output "Installing $installer..."
-
         Start-Process $installer $arguments -Wait
 
-        Get-ChildItem $desktopLink | Remove-Item
+        Get-ChildItem $desktopLink | Remove-Item -ErrorAction SilentlyContinue
     }
 }
