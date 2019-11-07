@@ -9,7 +9,7 @@ function Get-LatestVersion($url, $regEx) {
 }
 
 function Get-InstalledVersion($executable) {
-    if (Test-Path $executable) {
+    if (Test-Path $executable -ErrorAction SilentlyContinue) {
         $version = Get-Item $executable | `
             Select-Object -ExpandProperty VersionInfo | `
             Select-Object -ExpandProperty ProductVersion
