@@ -1,8 +1,6 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param()
 
-$script = $MyInvocation.MyCommand.Name
-
 . (Join-Path $PSScriptRoot 'Helpers\Functions.ps1')
 
 $downloadUrl = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe'
@@ -17,7 +15,7 @@ $latestVersion = Get-VersionFromHtml $releaseUrl $versionRegEx
 $installedVersion = Get-InstalledVersion ${env:ProgramFiles(x86)} $executableName
 
 if ($latestVersion -ne $installedVersion) {
-	if ($pscmdlet.ShouldProcess($script, 'Downloading the Installer...')) {
+	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading the Installer...')) {
 		$installer = Get-Installer $downloadUrl
 
 		Write-Output "
@@ -32,5 +30,5 @@ Installing...`n"
 	}
 }
 else {
-	Write-Output "$($script)...Up to Date`n"
+	Write-Output "$($config.Name)...Up to Date`n"
 }

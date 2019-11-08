@@ -1,3 +1,13 @@
+$config = @{
+    DownloadUrl      = '';
+    ExecutableName   = ''
+    InstalledVersion = '';
+    Installer        = '';
+    LatestVersion    = '';
+    ReleasesUrl      = '';
+    Name             = Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty BaseName
+}
+
 function Get-VersionFromRedirectUrl($url, $regEx) {
     $downloadUrl = ((Get-WebURL -Url $url).ResponseUri).AbsoluteUri
 
@@ -14,8 +24,8 @@ function Get-VersionFromHtml($url, $regEx) {
 }
 
 function Get-InstalledVersion($searchPath, $executable) {
-    $executablePath = Get-ChildItem $searchPath -Recurse `
-        $executableName -ErrorAction SilentlyContinue | `
+    $executablePath = Get-ChildItem $searchPath -File -Recurse `
+        $executable -ErrorAction SilentlyContinue | `
         Select-Object -First 1 -ExpandProperty FullName
 
     if ([System.IO.File]::Exists($executablePath)) {
@@ -30,7 +40,10 @@ function Get-InstalledVersion($searchPath, $executable) {
 function Get-Installer($downloadUrl) {
     $installer = Join-Path $env:Temp (Split-Path $downloadUrl -Leaf)
 
-    (New-Object System.Net.WebClient).DownloadFile($downloadUrl, $installer)
+    # If file is not already downloaded
+    if (-not [System.IO.File]::Exists($installer)) {
+        (New-Object System.Net.WebClient).DownloadFile($downloadUrl, $installer)
+    }
 
     if ([System.IO.File]::Exists($installer)) {
         return $installer
@@ -40,5 +53,16 @@ function Get-Installer($downloadUrl) {
 function Invoke-Installer($installer, $arguments) {
     if ([System.IO.File]::Exists($installer)) {
         Start-Process $installer $arguments -Wait
+    }
+}
+
+function Invoke-Unzip($archive, $destination) {
+    if ([System.IO.Directory]::Exists($destination)) {
+    }
+
+    if ([System.IO.File]::Exists($archive)) {
+        Expand-Archive -Path $archive -DestinationPath $destination -Force
+
+        Remove-Item $archive -ErrorAction SilentlyContinue
     }
 }

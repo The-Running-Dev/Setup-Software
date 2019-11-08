@@ -4,14 +4,12 @@ param(
     [switch] $createLayout
 )
 
-$script = $MyInvocation.MyCommand.Name
-
 # Import the config
 . (Join-Path $PSScriptRoot 'config.ps1') -showInterface:$showInterface
 
 # If the installer was not found
 if (-not (Test-Path $config.Installer -ErrorAction SilentlyContinue)) {
-    if ($pscmdlet.ShouldProcess($script, 'Downloading the Installer...')) {
+    if ($pscmdlet.ShouldProcess($config.Name, 'Downloading the Installer...')) {
         Write-Output "Downloading the Installer...
         $($config.DownloadUrl)
         $($config.Installer)"
@@ -44,7 +42,7 @@ Installer Layout Update Arguments: $($config.LayoutDirectoryUpdateArguments)
 if ($config.LatestVersion -ne $config.InstalledVersion) {
     Write-Output "Newer Version Exists...`n"
 
-    if ($pscmdlet.ShouldProcess($script, 'Updating the Installer...')) {
+    if ($pscmdlet.ShouldProcess($config.Name, 'Updating the Installer...')) {
         Write-Output "Updating the Installer...
     $($config.Installer) $($config.InstallerUpdateArguments)`n"
 
@@ -53,14 +51,14 @@ if ($config.LatestVersion -ne $config.InstalledVersion) {
 
     # If the layout directory exists, update it as well
     if (Test-Path $config.LayoutDirectory) {
-        if ($pscmdlet.ShouldProcess($script, 'Updating the Local Layout...')) {
+        if ($pscmdlet.ShouldProcess($config.Name, 'Updating the Local Layout...')) {
             Write-Output "Updating the Local Layout...
         $($config.Installer) $($config.LayoutDirectoryUpdateArguments)`n"
 
             Start-Process $config.Installer $config.LayoutDirectoryUpdateArguments -Wait
         }
 
-        if ($pscmdlet.ShouldProcess($script, 'Removing Outdated Packages...')) {
+        if ($pscmdlet.ShouldProcess($config.Name, 'Removing Outdated Packages...')) {
             Write-Output "
         Removing Outdated Packages...`n"
 
@@ -76,7 +74,7 @@ if ($config.LatestVersion -ne $config.InstalledVersion) {
 if (-not $createLayout) {
     # If the installed executable does not exist, this is a new install
     if (-not (Test-Path $config.InstalledExecutable -ErrorAction SilentlyContinue)) {
-        if ($pscmdlet.ShouldProcess($script, 'Installing...')) {
+        if ($pscmdlet.ShouldProcess($config.Name, 'Installing...')) {
             Write-Output "Installing...
         $($config.InstallArguments)`n"
 
@@ -84,7 +82,7 @@ if (-not $createLayout) {
         }
     }
     elseif ($config.LatestVersion -ne $config.InstalledVersion) {
-        if ($pscmdlet.ShouldProcess($script, 'Updating Installed Instance...')) {
+        if ($pscmdlet.ShouldProcess($config.Name, 'Updating Installed Instance...')) {
             Write-Output "Updating Installed Instance...
         $($config.Installer) $($config.InstallUpdateArguments)`n"
 
@@ -92,7 +90,7 @@ if (-not $createLayout) {
         }
     }
     else {
-        Write-Output "$($script)...Up to Date`n"
+        Write-Output "$($config.Name)...Up to Date`n"
     }
 }
 else {
@@ -105,7 +103,7 @@ else {
         Write-Output "Creating/Updating Local Layout...
         $($config.Installer) $($config.LayoutDirectoryUpdateArguments)`n"
 
-        if ($pscmdlet.ShouldProcess($script, 'Creating/Updating Local Layout...')) {
+        if ($pscmdlet.ShouldProcess($config.Name, 'Creating/Updating Local Layout...')) {
             Start-Process $config.Installer $config.LayoutDirectoryUpdateArguments -Wait
         }
     }
