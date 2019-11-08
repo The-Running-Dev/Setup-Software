@@ -3,28 +3,24 @@ param()
 
 . (Join-Path $PSScriptRoot 'Helpers\Functions.ps1')
 
-$url = 'https://www.binaryfortress.com/Data/Download/?package=clipboardfusion&log=104'
-$versionRegEx = 'ClipboardFusionSetup-([0-9\.\-]+)\.exe$'
-$executableName = 'ClipboardFusion.exe'
-$installerArguments = '/VERYSILENT /LAUNCHAFTER=0'
+$config.ReleasesUrl = 'https://www.binaryfortress.com/Data/Download/?package=clipboardfusion&log=104'
+$config.VersionRegEx = 'ClipboardFusionSetup-([0-9\.\-]+)\.exe$'
+$config.Executable = 'ClipboardFusion.exe'
+$config.InstallerArguments = '/VERYSILENT /LAUNCHAFTER=0'
+$config.InstallDestination = ${env:ProgramFiles(x86)}
 
-$latestVersion = Get-VersionFromRedirectUrl $url $versionRegEx
-$installedVersion = Get-InstalledVersion ${env:ProgramFiles(x86)} $executableName
+$versionData = Get-VersionFromRedirectUrl $config.ReleasesUrl $config.VersionRegEx
+$config.LatestVersion = $versionData.Version
+$config.DownloadUrl = $versionData.Url
 
-if ($latestVersion.Version -ne $installedVersion) {
-	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading the Installer...')) {
-		$installer = Get-Installer $latestVersion.Url
+$config.InstalledVersion = Get-InstalledVersion $config.InstallDestination $config.Executable
 
-		Write-Output "
-Latest Version: $($latestVersion.Version)
-Installed Version: $installedVersion
+if ($config.LatestVersion -ne $config.InstalledVersion) {
+	Write-Output $config | Format-Table
 
-Installer: $installer
-Installing...`n"
+	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading and Installing...')) {
+		$config.Installer = Get-Installer $config.DownloadUrl
 
-		Invoke-Installer $installer $installerArguments
+		Invoke-Installer $config.Installer $config.InstallerArguments
 	}
-}
-else {
-	Write-Output "$($config.Name)...Up to Date`n"
 }

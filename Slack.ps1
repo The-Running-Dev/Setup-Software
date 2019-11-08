@@ -3,33 +3,25 @@ param()
 
 . (Join-Path $PSScriptRoot 'Helpers\Functions.ps1')
 
-$downloadUrl = 'https://downloads.slack-edge.com/releases_x64/SlackSetup.exe'
-$executableName = 'Slack.exe'
+$config.DownloadUrl = 'https://downloads.slack-edge.com/releases_x64/SlackSetup.exe'
+$config.ReleasesUrl = 'https://slack.com/downloads/windows'
+$config.VersionRegEx = '.*Version ([\d]+\.[\d\.]+)'
+$config.Executable = 'Slack.exe'
+$config.InstallDestination = Join-Path $env:UserProfile 'AppData\Local'
+$config.InstallerArguments = '/s'
+$config.DesktopLink = Join-Path $env:UserProfile 'Desktop\Slack.lnk'
 
-$releaseUrl = 'https://slack.com/downloads/windows'
-$versionRegEx = '.*Version ([\d]+\.[\d\.]+)'
+$config.LatestVersion = Get-VersionFromHtml $config.ReleasesUrl $config.VersionRegEx
+$config.InstalledVersion = Get-InstalledVersion $config.InstallDestination $config.Executable
 
-$installerArguments = '/s'
+if ($config.LatestVersion -ne $config.InstalledVersion) {
+	Write-Output $config | Format-Table
 
-$latestVersion = Get-VersionFromHtml $releaseUrl $versionRegEx
-$installedVersion = Get-InstalledVersion `
-	(Join-Path $env:UserProfile 'AppData\Local') $executableName
+	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading and Installing...')) {
+		$config.Installer = Get-Installer $config.DownloadUrl
 
-if ($latestVersion -ne $installedVersion) {
-	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading the Installer...')) {
-		$installer = Get-Installer $downloadUrl
+		Invoke-Installer $config.Installer $config.InstallerArguments
 
-		Write-Output "
-Latest Version: $latestVersion
-Installed Version: $installedVersion
-
-Installer: $installer
-Installing...`n"
-
-		Invoke-Installer $installer $installerArguments
-		Remove-Item (Join-Path $env:UserProfile 'Desktop\Slack.lnk') -ErrorAction SilentlyContinue
+		Remove-Item $config.DesktopLink -ErrorAction SilentlyContinue
 	}
-}
-else {
-	Write-Output "$($config.Name)...Up to Date`n"
 }

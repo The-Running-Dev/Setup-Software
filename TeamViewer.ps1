@@ -3,32 +3,25 @@ param()
 
 . (Join-Path $PSScriptRoot 'Helpers\Functions.ps1')
 
-$downloadUrl = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe'
-$executableName = 'TeamViewer.exe'
+$config.DownloadUrl = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe'
+$config.ReleasesUrl = 'http://www.filehorse.com/download-teamviewer/'
+$config.VersionRegEx = '.TeamViewer ([0-9\.]+)'
+$config.Executable = 'TeamViewer.exe'
+$config.InstallDestination = ${env:ProgramFiles(x86)}
+$config.InstallerArguments = '/S /norestart'
+$config.DesktopLink = Join-Path $env:UserProfile 'Desktop\TeamViewer 14.lnk'
 
-$releaseUrl = 'http://www.filehorse.com/download-teamviewer/'
-$versionRegEx = '.TeamViewer ([0-9\.]+)'
+$config.LatestVersion = Get-VersionFromHtml $config.ReleasesUrl $config.VersionRegEx
+$config.InstalledVersion = Get-InstalledVersion $config.InstallDestination $config.Executable
 
-$installerArguments = '/S /norestart'
+if ($config.LatestVersion -ne $config.InstalledVersion) {
+	Write-Output $config | Format-Table
 
-$latestVersion = Get-VersionFromHtml $releaseUrl $versionRegEx
-$installedVersion = Get-InstalledVersion ${env:ProgramFiles(x86)} $executableName
+	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading and Installing...')) {
+		$config.Installer = Get-Installer $config.DownloadUrl
 
-if ($latestVersion -ne $installedVersion) {
-	if ($pscmdlet.ShouldProcess($config.Name, 'Downloading the Installer...')) {
-		$installer = Get-Installer $downloadUrl
+		Invoke-Installer $config.Installer $config.InstallerArguments
 
-		Write-Output "
-Latest Version: $latestVersion
-Installed Version: $installedVersion
-
-Installer: $installer
-Installing...`n"
-
-		Invoke-Installer $installer $installerArguments
-		Remove-Item (Join-Path $env:UserProfile 'Desktop\TeamViewer 14.lnk') -ErrorAction SilentlyContinue
+		Remove-Item $config.DesktopLink -ErrorAction SilentlyContinue
 	}
-}
-else {
-	Write-Output "$($config.Name)...Up to Date`n"
 }

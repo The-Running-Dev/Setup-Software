@@ -1,11 +1,14 @@
 $config = @{
-    DownloadUrl      = '';
-    ExecutableName   = ''
-    InstalledVersion = '';
-    Installer        = '';
-    LatestVersion    = '';
-    ReleasesUrl      = '';
-    Name             = Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty BaseName
+    DownloadUrl        = '';
+    Executable         = ''
+    InstallDestination = '';
+    InstalledVersion   = '';
+    Installer          = '';
+    InstallerArguments = '';
+    LatestVersion      = '';
+    Name               = Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty BaseName
+    ReleasesUrl        = '';
+    VersionRegEx       = ''
 }
 
 function Get-VersionFromRedirectUrl($url, $regEx) {
