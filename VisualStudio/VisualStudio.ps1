@@ -4,8 +4,6 @@ param(
     [switch] $createLayout
 )
 
-Clear-Host
-
 $script = $MyInvocation.MyCommand.Name
 
 # Import the config
@@ -94,7 +92,7 @@ if (-not $createLayout) {
         }
     }
     else {
-        Write-Output "`nYour Are Up to Date...`n"
+        Write-Output "$($script)...Up to Date`n"
     }
 }
 else {

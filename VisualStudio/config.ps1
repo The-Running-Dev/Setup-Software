@@ -3,7 +3,7 @@ param([switch] $showInterface)
 
 Import-Module PowerHTML
 
-. (Join-Path $PSScriptRoot '..\Functions.ps1' -Resolve)
+. (Join-Path $PSScriptRoot '..\Helpers\Functions.ps1' -Resolve)
 
 $interfaceSwitch = $(@{$true = '--passive'; $false = '--quiet' }[$showInterface.IsPresent])
 
