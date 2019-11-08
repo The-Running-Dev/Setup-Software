@@ -1,0 +1,30 @@
+$config = Join-Path $PSScriptRoot '.vsconfig'
+$installer = Join-Path $PSScriptRoot 'vs_enterprise.exe'
+$addInsDir = 'D:\Downloads'
+$vsixInstaller = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\2019\Enterprise\Common7\IDE\VSIXInstaller.exe'
+$productKey = 'VJW7J-RJNHX-BXQ6B-XVYR9-C7MQF'
+
+Clear-Host
+
+"$installer --update --quiet"
+Start-Process `
+    $installer `
+    -ArgumentList("--update --quiet") `
+    -Wait
+
+"$installer --config $config --productKey $productKey --passive --norestart"
+Start-Process `
+    $installer `
+    -ArgumentList("--config $config --productKey $productKey --passive --norestart") `
+    -Wait
+
+#$vsixInstaller
+
+Get-ChildItem $addInsDir *.vsix | ForEach-Object {
+    $_.FullName
+
+    Start-Process `
+        $vsixInstaller `
+        -ArgumentList("/force /admin `"$($_.FullName)`"") `
+        -Wait
+}
