@@ -23,12 +23,12 @@ Read-Host "Hit Any Key to Continue..."
 "Downloading Config '$configUrl' to '$configPath'..." | Write-Output
 (New-Object System.Net.WebClient).DownloadFile($configUrl, $configPath)
 
-if ((Test-Path $installer) -and (Test-Path $configPath)) {
-    "Running Installer '$installer'
+if ((Test-Path $installerPath) -and (Test-Path $configPath)) {
+    "Running Installer '$installerPath'
     Arguments: --config ""$configPath"" --passive --norestart --wait" | Write-Output
 
     Start-Process `
-        $installer `
+        $installerPath `
         "--config ""$configPath"" --passive --norestart --wait" `
         -Wait
 }
