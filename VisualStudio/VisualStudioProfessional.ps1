@@ -1,5 +1,5 @@
 $downloadUrl = 'https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16'
-$configUrl = 'https://'
+$configUrl = 'https://github.com/The-Running-Dev/Setup-Software/raw/master/VisualStudio/Config/.vsconfig.community'
 
 $installerPath = Join-Path $env:Temp 'vs_community.exe'
 $configPath = Join-Path $env:Temp '.vsconfig'
