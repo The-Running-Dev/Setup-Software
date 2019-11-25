@@ -5,7 +5,7 @@ param()
 
 $config.ReleasesUrl = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
 $config.Executable = 'pwsh.exe'
-$config.InstallDestination = 'D:\Temp\PowerShell'
+$config.InstallDestination = 'D:\Dev\Programs\Programming\PowerShell'
 
 $jsonData = Invoke-RestMethod $config.ReleasesUrl
 $releaseData = $jsonData | Where-Object prerelease -eq $true | Select-Object -first 1
@@ -16,8 +16,8 @@ $config.DownloadUrl = $releaseData | `
     Select-Object -ExpandProperty browser_download_url
 
 $config.LatestVersion = $releaseData.tag_name.TrimStart('v')
-$config.InstalledVersion = Get-InstalledVersion $config.InstallDestination $config.Executable
-$config.InstalledVersion = $config.InstalledVersion -replace '\sSHA.*', ''
+$versionInfo = Get-VersionInfo $config.InstallDestination $config.Executable
+$config.InstalledVersion = $versionInfo.ProductVersion -replace '\sSHA.*', ''
 
 if ($config.LatestVersion -ne $config.InstalledVersion) {
     Write-Output $config | Format-Table
@@ -25,6 +25,6 @@ if ($config.LatestVersion -ne $config.InstalledVersion) {
     if ($pscmdlet.ShouldProcess($config.Name, 'Downloading and Installing...')) {
         $config.Installer = Get-Installer $config.DownloadUrl
 
-        Invoke-Unzip $config.Installer $config.InstallDestination
+        Invoke-Unzip $config.Installer $config.InstallDestination -clean $true
     }
 }

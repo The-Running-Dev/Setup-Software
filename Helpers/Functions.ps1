@@ -26,17 +26,28 @@ function Get-VersionFromHtml($url, $regEx) {
     return ([regex]::match($pageContent.Content, $regEx).Groups[1].Value)
 }
 
-function Get-InstalledVersion($searchPath, $executable) {
+function Get-MajorMinorBuildInstalledVersion($searchPath, $executable) {
+    $versionInfo = Get-VersionInfo $searchPath $executable
+
+    return "$($versionInfo.ProductMajorPart).$($versionInfo.ProductMinorPart).$($versionInfo.ProductBuildPart)"
+}
+
+function Get-MajorMinorInstalledVersion($searchPath, $executable) {
+    $versionInfo = Get-VersionInfo $searchPath $executable
+
+    return "$($versionInfo.ProductMajorPart).$($versionInfo.ProductMinorPart)"
+}
+
+function Get-VersionInfo($searchPath, $executable) {
     $executablePath = Get-ChildItem $searchPath -File -Recurse `
         $executable -ErrorAction SilentlyContinue | `
         Select-Object -First 1 -ExpandProperty FullName
 
     if ([System.IO.File]::Exists($executablePath)) {
-        $installedVersion = Get-Item $executablePath | `
-            Select-Object -ExpandProperty VersionInfo | `
-            Select-Object -ExpandProperty ProductVersion
+        $versionInfo = Get-Item $executablePath | `
+            Select-Object -ExpandProperty VersionInfo
 
-        return $installedVersion.TrimEnd('.0')
+        return $versionInfo
     }
 }
 
@@ -59,8 +70,9 @@ function Invoke-Installer($installer, $arguments) {
     }
 }
 
-function Invoke-Unzip($archive, $destination) {
-    if ([System.IO.Directory]::Exists($destination)) {
+function Invoke-Unzip($archive, $destination, $clean = $false) {
+    if ([System.IO.Directory]::Exists($destination) -and $clean) {
+        Remove-Item -Recurse -Force "$destination\*"
     }
 
     if ([System.IO.File]::Exists($archive)) {

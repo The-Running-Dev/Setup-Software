@@ -12,7 +12,7 @@ $config.InstallerArguments = '/s'
 $config.DesktopLink = Join-Path $env:UserProfile 'Desktop\Slack.lnk'
 
 $config.LatestVersion = Get-VersionFromHtml $config.ReleasesUrl $config.VersionRegEx
-$config.InstalledVersion = Get-InstalledVersion $config.InstallDestination $config.Executable
+$config.InstalledVersion = Get-MajorMinorBuildInstalledVersion $config.InstallDestination $config.Executable
 
 if ($config.LatestVersion -ne $config.InstalledVersion) {
 	Write-Output $config | Format-Table
