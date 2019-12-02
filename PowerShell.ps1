@@ -3,10 +3,6 @@ param()
 
 . (Join-Path $PSScriptRoot 'Helpers\Functions.ps1')
 
-$config.ReleasesUrl = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
-$config.Executable = 'pwsh.exe'
-$config.InstallDestination = 'D:\Dev\Programs\Programming\PowerShell'
-
 $jsonData = Invoke-RestMethod $config.ReleasesUrl
 $releaseData = $jsonData | Where-Object prerelease -eq $true | Select-Object -first 1
 
@@ -20,11 +16,15 @@ $versionInfo = Get-VersionInfo $config.InstallDestination $config.Executable
 $config.InstalledVersion = $versionInfo.ProductVersion -replace '\sSHA.*', ''
 
 if ($config.LatestVersion -ne $config.InstalledVersion) {
-    Write-Output $config | Format-Table
+    Write-Output $config
 
     if ($pscmdlet.ShouldProcess($config.Name, 'Downloading and Installing...')) {
         $config.Installer = Get-Installer $config.DownloadUrl
 
         Invoke-Unzip $config.Installer $config.InstallDestination -clean $true
     }
+}
+
+if ($config.InstalledVersion) {
+    Save-Config $config
 }
