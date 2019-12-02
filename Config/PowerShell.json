@@ -1,0 +1,13 @@
+{
+  "ReleasesUrl": "https://api.github.com/repos/PowerShell/PowerShell/releases",
+  "InstallDestination": "D:\\Programs\\Programming\\PowerShell",
+  "Executable": "pwsh.exe",
+  "Name": "PowerShell",
+  "DownloadUrl": "https://github.com/PowerShell/PowerShell/releases/download/v7.0.0-preview.6/PowerShell-7.0.0-preview.6-win-x64.zip",
+  "InstallerArguments": "",
+  "Installer": "",
+  "Process": "",
+  "InstalledVersion": "",
+  "VersionRegEx": "",
+  "LatestVersion": "7.0.0-preview.6"
+}

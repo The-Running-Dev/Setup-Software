@@ -1,0 +1,14 @@
+{
+  "ReleasesUrl": "http://www.filehorse.com/download-flux/",
+  "InstallDestination": "C:\\Users\\Ben\\AppData\\Local",
+  "Executable": "flux.exe",
+  "Name": "Flux",
+  "DownloadUrl": "https://justgetflux.com/flux-setup.exe",
+  "InstallerArguments": "/S",
+  "Installer": "",
+  "Process": "",
+  "InstalledVersion": "",
+  "DesktopLink": "C:\\Users\\Ben\\Desktop\\Flux.lnk",
+  "VersionRegEx": ".*f.lux ([0-9\\.]+)",
+  "LatestVersion": "4.111"
+}

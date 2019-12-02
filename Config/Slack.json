@@ -1,0 +1,14 @@
+{
+  "ReleasesUrl": "https://slack.com/downloads/windows",
+  "InstallDestination": "C:\\Users\\Ben\\AppData\\Local",
+  "Executable": "Slack.exe",
+  "Name": "Slack",
+  "DownloadUrl": "https://downloads.slack-edge.com/releases_x64/SlackSetup.exe",
+  "InstallerArguments": "/s",
+  "Installer": "",
+  "Process": "",
+  "InstalledVersion": "",
+  "DesktopLink": "C:\\Users\\Ben\\Desktop\\Slack.lnk",
+  "VersionRegEx": ".*Version ([\\d]+\\.[\\d\\.]+)",
+  "LatestVersion": "4.2.0"
+}
