@@ -1,14 +1,46 @@
+$configDirName = 'Setup-Software'
+$repositoryConfigDir = 'Config'
+
+$repositoryDirectory = Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty Directory
+$repositoryConfigDirectory = Join-Path $repositoryDirectory $repositoryConfigDir
+$configFile = "$(Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty BaseName).json"
+
+$globalConfig = @{
+    Settings           = Join-Path (Join-Path $env:AppData $configDirName) $configFile
+    SettingsDirectory  = Join-Path $env:AppData $configDirName
+    RepositorySettings = Join-Path $repositoryConfigDirectory $configFile
+}
+
 $config = @{
     DownloadUrl        = '';
-    Executable         = ''
+    Executable         = '';
     InstallDestination = '';
     InstalledVersion   = '';
     Installer          = '';
     InstallerArguments = '';
     LatestVersion      = '';
-    Name               = Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty BaseName
+    LastUpdateCheck    = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
+    Name               = Get-Item $MyInvocation.PSCommandPath | Select-Object -ExpandProperty BaseName;
+    Process            = '';
     ReleasesUrl        = '';
-    VersionRegEx       = ''
+    VersionRegEx       = '';
+}
+
+New-Item -ItemType Directory $globalConfig.SettingsDirectory -ErrorAction SilentlyContinue | Out-Null
+
+if (-not (Test-Path $globalConfig.Settings -ErrorAction SilentlyContinue)) {
+    $config = Get-Content $globalConfig.RepositorySettings | ConvertFrom-Json
+
+    $config.PSobject.Properties | ForEach-Object {
+        $config.$($_.Name) = $ExecutionContext.InvokeCommand.ExpandString($_.Value)
+    }
+}
+else {
+    $config = Get-Content $globalConfig.Settings | ConvertFrom-Json
+
+    $config.PSobject.Properties | ForEach-Object {
+        $config.$($_.Name) = $ExecutionContext.InvokeCommand.ExpandString($_.Value)
+    }
 }
 
 function Get-VersionFromRedirectUrl($url, $regEx) {
@@ -29,13 +61,23 @@ function Get-VersionFromHtml($url, $regEx) {
 function Get-MajorMinorBuildInstalledVersion($searchPath, $executable) {
     $versionInfo = Get-VersionInfo $searchPath $executable
 
-    return "$($versionInfo.ProductMajorPart).$($versionInfo.ProductMinorPart).$($versionInfo.ProductBuildPart)"
+    if ($versionInfo) {
+        return "$($versionInfo.ProductMajorPart).$($versionInfo.ProductMinorPart).$($versionInfo.ProductBuildPart)"
+    }
+    else {
+        return ''
+    }
 }
 
 function Get-MajorMinorInstalledVersion($searchPath, $executable) {
     $versionInfo = Get-VersionInfo $searchPath $executable
 
-    return "$($versionInfo.ProductMajorPart).$($versionInfo.ProductMinorPart)"
+    if ($versionInfo) {
+        return "$($versionInfo.ProductMajorPart).$($versionInfo.ProductMinorPart)"
+    }
+    else {
+        return ''
+    }
 }
 
 function Get-VersionInfo($searchPath, $executable) {
@@ -76,8 +118,23 @@ function Invoke-Unzip($archive, $destination, $clean = $false) {
     }
 
     if ([System.IO.File]::Exists($archive)) {
-        Expand-Archive -Path $archive -DestinationPath $destination -Force
+        Expand-Archive -Path $archive -OutputPath $destination -Force
 
         Remove-Item $archive -ErrorAction SilentlyContinue
     }
+}
+
+function Save-Config($config) {
+    $date = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+    if (-not $config.LastUpdateCheck) {
+        $config | Add-Member -NotePropertyName LastUpdateCheck -NotePropertyValue $date
+    }
+    else {
+        $config.LastUpdateCheck = $date
+    }
+
+    $config.InstalledVersion = $config.LatestVersion
+
+    Set-Content -Path $globalConfig.Settings -Value ($config | ConvertTo-Json)
 }
