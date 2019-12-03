@@ -1,6 +1,6 @@
 {
   "ReleasesUrl": "http://www.filehorse.com/download-teamviewer/",
-  "InstallDestination": "C:\\Program Files (x86)",
+  "InstallDestination": "${env:ProgramFiles(x86)}",
   "Executable": "TeamViewer.exe",
   "Name": "TeamViewer",
   "DownloadUrl": "https://download.teamviewer.com/download/TeamViewer_Setup.exe",

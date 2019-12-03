@@ -1,6 +1,6 @@
 {
   "ReleasesUrl": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/VERSION",
-  "InstallDestination": "D:\\Dropbox\\Programs\\Programming\\VSCode",
+  "InstallDestination": "$env:ProgramFiles\\Microsoft VS Code",
   "Executable": "code.exe",
   "Name": "VisualStudioCode",
   "DownloadUrl": "https://az764295.vo.msecnd.net/stable/f359dd69833dd8800b54d458f6d37ab7c78df520/VSCode-win32-x64-1.40.2.zip",

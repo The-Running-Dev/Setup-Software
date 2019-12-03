@@ -1,6 +1,6 @@
 {
   "ReleasesUrl": "https://www.binaryfortress.com/Data/Download/?package=clipboardfusion&log=104",
-  "InstallDestination": "C:\\Program Files (x86)",
+  "InstallDestination": "${env:ProgramFiles(x86)}",
   "Executable": "ClipboardFusion.exe",
   "Name": "ClipboardFusion",
   "DownloadUrl": "https://binaryfortressdownloads.com/Download/BFSFiles/104/ClipboardFusionSetup-5.6.exe",
