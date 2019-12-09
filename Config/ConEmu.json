@@ -1,0 +1,13 @@
+{
+  "ReleasesUrl": "https://api.github.com/repos/Maximus5/ConEmu/releases",
+  "InstallDestination": "D:\\Programs\\Programming\\ConEmu",
+  "Executable": "conemu.exe",
+  "Name": "ConEmu",
+  "DownloadUrl": "",
+  "InstallerArguments": "",
+  "Installer": "",
+  "Process": "",
+  "InstalledVersion": "",
+  "VersionRegEx": "",
+  "LatestVersion": ""
+}
